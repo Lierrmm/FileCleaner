@@ -1,9 +1,20 @@
 ﻿namespace FileCleaner.Games
 {
-    public class IW7 : Base
+    public class S1 : Base
     {
-        public override string WELCOME_MESSAGE => "COD: Infinite Warfare Cleaner";
-        public override string[] GAME_EXECUTABLES { get; } = { "iw7_ship.exe" };
+        public override string WELCOME_MESSAGE => "COD: Advanced Warfare Cleaner";
+        public override string[] GAME_EXECUTABLES { get; } = { "s1_mp64_ship.exe", "s1_sp64_ship.exe" };
+
+        public override string ENGLISH_FOLDER { get; } = "English";
+        public override string ENGLISH_SAFE_FOLDER { get; } = "English_safe";
+        public override string FRENCH_FOLDER { get; } = "French";
+        public override string GERMAN_FOLDER { get; } = "German";
+        public override string RUSSIAN_FOLDER { get; } = "Russian";
+        public override string POLISH_FOLDER { get; } = "Polish";
+        public override string KOREAN_FOLDER { get; } = "Korean";
+        public override string PORTUGUESE_FOLDER { get; } = "Portuguese";
+        public override string SPANISH_FOLDER { get; } = "Spanish";
+        public override string ITALIAN_FOLDER { get; } = "Italian";
 
         public override async Task Process()
         {
@@ -53,8 +64,6 @@
             {
                 { FASTFILE_EXTENSION, CLEAN_ZONE_FOLDER },
                 { PAK_EXTENSION,      CLEAN_ZONE_FOLDER },
-                { SABL_EXTENSION,     CLEAN_ZONE_FOLDER },
-                { SABS_EXTENSION,     CLEAN_ZONE_FOLDER },
                 { BIK_EXTENSION,      CLEAN_RAW_VIDEO_FOLDER }
             };
 

@@ -39,6 +39,20 @@
             }
         }
 
+        public static void MoveSpecificFiles(string sourceDir, string destDir, string pattern)
+        {
+            if (!Directory.Exists(sourceDir)) return;
+            if (!Directory.Exists(destDir)) Directory.CreateDirectory(destDir);
+
+            string[] files = Directory.GetFiles(sourceDir, pattern);
+            foreach (var file in files)
+            {
+                string destFile = Path.Combine(destDir, Path.GetFileName(file));
+                if (File.Exists(destFile)) File.Delete(destFile);
+                File.Move(file, destFile);
+            }
+        }
+
         public static void TryCleanupDirectory(string path)
         {
             try
