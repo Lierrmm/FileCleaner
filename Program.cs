@@ -6,8 +6,9 @@ class Program
 {
     private static readonly Base[] SupportedGames =
     [
+        new S1(),
         new IW7(),
-        new S1()
+        new H1()
     ];
 
     private static Base? DetectGame()
