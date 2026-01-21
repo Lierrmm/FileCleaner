@@ -7,132 +7,128 @@
 
         public override async Task Process()
         {
-        Main:
-            Console.WriteLine(WELCOME_MESSAGE);
-            Console.WriteLine("[1] Clean Game Files");
-            Console.WriteLine("[2] Revert Cleaning");
-            var choice = Console.ReadLine();
-
-            if (choice == null)
+            RUNNING = true;
+            while (RUNNING)
             {
-                Console.WriteLine("Not a Valid Choice!");
-                goto Main;
+                Helpers.WriteColor(WELCOME_MESSAGE);
+                Helpers.WriteColor("[1] Clean Game Files");
+                Helpers.WriteColor("[2] Revert Cleaning");
+                Helpers.WriteColor("[Q] Quit", ConsoleColor.DarkGray);
+
+                var choice = Console.ReadLine()?.ToUpperInvariant();
+
+                switch (choice)
+                {
+                    case "1":
+                        await CleanGameFiles();
+                        break;
+                    case "2":
+                        await RevertCleaning();
+                        break;
+                    case "Q":
+                        RUNNING = false;
+                        break;
+                    default:
+                        Helpers.WriteColor("Not a Valid Choice!\n", ConsoleColor.Red);
+                        break;
+                }
+            }
+        }
+
+        private async Task CleanGameFiles()
+        {
+            if (!File.Exists(COMMON_MP_FASTFILE) || !File.Exists(COMMON_FASTFILE))
+            {
+                Helpers.WriteColor("Your game is already clean!\nIf not, make sure you have put the file in the correct game folder.\n", ConsoleColor.Yellow);
+                return;
             }
 
-            if (choice == "1")
+            Helpers.EnsureDirectoriesExist([ZONE_FOLDER,
+                RAW_FOLDER,
+                RAW_VIDEO_FOLDER,
+                CLEAN_ZONE_FOLDER,
+                CLEAN_RAW_VIDEO_FOLDER]);
+
+            var fileTypeMap = new Dictionary<string, string>
             {
-                string[] fastFiles = Directory.GetFiles("./", FASTFILE_EXTENSION);
-                string[] bikFiles = Directory.GetFiles("./", BIK_EXTENSION);
-                string[] pakFiles = Directory.GetFiles("./", PAK_EXTENSION);
-                string[] sablFiles = Directory.GetFiles("./", SABL_EXTENSION);
-                string[] sabsFiles = Directory.GetFiles("./", SABS_EXTENSION);
+                { FASTFILE_EXTENSION, CLEAN_ZONE_FOLDER },
+                { PAK_EXTENSION,      CLEAN_ZONE_FOLDER },
+                { SABL_EXTENSION,     CLEAN_ZONE_FOLDER },
+                { SABS_EXTENSION,     CLEAN_ZONE_FOLDER },
+                { BIK_EXTENSION,      CLEAN_RAW_VIDEO_FOLDER }
+            };
 
-                if (!File.Exists(COMMON_MP_FASTFILE) || !File.Exists(COMMON_FASTFILE))
+            foreach (var entry in fileTypeMap)
+            {
+                string[] files = Directory.GetFiles("./", entry.Key);
+                if (files.Length > 0)
                 {
-                    Console.WriteLine("Your game is already clean!\nIf not, make sure you have put the file in the correct game folder.\n");
-                    goto Main;
+                    Helpers.MoveFileTo(files, entry.Value);
                 }
-
-                if (!Directory.Exists(ZONE_FOLDER))
-                {
-                    Console.WriteLine("Creating Zone Folder");
-                    Directory.CreateDirectory(ZONE_FOLDER);
-                }
-
-                if (!Directory.Exists(RAW_FOLDER))
-                {
-                    Console.WriteLine("Creating Raw Folder");
-                    Directory.CreateDirectory(RAW_FOLDER);
-                }
-
-                if (!Directory.Exists(RAW_VIDEO_FOLDER))
-                {
-                    Console.WriteLine("Creating Raw Video Folder");
-                    Directory.CreateDirectory(RAW_VIDEO_FOLDER);
-                }
-
-                Helpers.MoveFileTo(fastFiles, CLEAN_ZONE_FOLDER);
-                Helpers.MoveFileTo(pakFiles, CLEAN_ZONE_FOLDER);
-                Helpers.MoveFileTo(sablFiles, CLEAN_ZONE_FOLDER);
-                Helpers.MoveFileTo(sabsFiles, CLEAN_ZONE_FOLDER);
-                Helpers.MoveFileTo(bikFiles, CLEAN_RAW_VIDEO_FOLDER);
-
-                try
-                {
-                    Helpers.MoveDirectoryTo(ENGLISH_FOLDER, ENGLISH_ZONE_FOLDER);
-                    Helpers.MoveDirectoryTo(ENGLISH_SAFE_FOLDER, ENGLISH_SAFE_ZONE_FOLDER);
-                    Helpers.MoveDirectoryTo(FRENCH_FOLDER, FRENCH_ZONE_FOLDER);
-                    Helpers.MoveDirectoryTo(GERMAN_FOLDER, GERMAN_ZONE_FOLDER);
-                    Helpers.MoveDirectoryTo(RUSSIAN_FOLDER, RUSSIAN_ZONE_FOLDER);
-                    Helpers.MoveDirectoryTo(POLISH_FOLDER, POLISH_ZONE_FOLDER);
-                    Helpers.MoveDirectoryTo(JAPAN_FOLDER, JAPAN_ZONE_FOLDER);
-                    Helpers.MoveDirectoryTo(KOREAN_FOLDER, KOREAN_ZONE_FOLDER);
-                    Helpers.MoveDirectoryTo(PORTUGUESE_FOLDER, PORTUGUESE_ZONE_FOLDER);
-                    Helpers.MoveDirectoryTo(SPANISH_FOLDER, SPANISH_ZONE_FOLDER);
-                    Helpers.MoveDirectoryTo(ITALIAN_FOLDER, ITALIAN_ZONE_FOLDER);
-                    Helpers.MoveDirectoryTo(SCHINA_FOLDER, SCHINA_ZONE_FOLDER);
-                    Helpers.MoveDirectoryTo(TCHINA_FOLDER, TCHINA_ZONE_FOLDER);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-
-                Console.WriteLine("Finished Processing Files\n");
-                goto Main;
             }
 
-            if (choice == "2")
+            MoveLanguageFolders(isReverting: false);
+            Helpers.WriteColor("Finished Processing Files\n", ConsoleColor.Green);
+        }
+
+        private void MoveLanguageFolders(bool isReverting)
+        {
+            var folderMap = new Dictionary<string, string>
             {
-                string[] fastFiles = Directory.GetFiles("./", CLEAN_FASTFILE_EXTENSION);
-                string[] bikFiles = Directory.GetFiles("./", CLEAN_BIK_EXTENSION);
-                string[] pakFiles = Directory.GetFiles("./", CLEAN_PAK_EXTENSION);
-                string[] sablFiles = Directory.GetFiles("./", CLEAN_SABL_EXTENSION);
-                string[] sabsFiles = Directory.GetFiles("./", CLEAN_SABS_EXTENSION);
+                { ENGLISH_FOLDER, ENGLISH_ZONE_FOLDER },
+                { ENGLISH_SAFE_FOLDER, ENGLISH_SAFE_ZONE_FOLDER },
+                { FRENCH_FOLDER, FRENCH_ZONE_FOLDER },
+                { GERMAN_FOLDER, GERMAN_ZONE_FOLDER },
+                { RUSSIAN_FOLDER, RUSSIAN_ZONE_FOLDER },
+                { POLISH_FOLDER, POLISH_ZONE_FOLDER },
+                { JAPAN_FOLDER, JAPAN_ZONE_FOLDER },
+                { KOREAN_FOLDER, KOREAN_ZONE_FOLDER },
+                { PORTUGUESE_FOLDER, PORTUGUESE_ZONE_FOLDER },
+                { SPANISH_FOLDER, SPANISH_ZONE_FOLDER },
+                { ITALIAN_FOLDER, ITALIAN_ZONE_FOLDER },
+                { SCHINA_FOLDER, SCHINA_ZONE_FOLDER },
+                { TCHINA_FOLDER, TCHINA_ZONE_FOLDER }
+            };
 
-                Helpers.MoveFileTo(fastFiles, "./");
-                Helpers.MoveFileTo(pakFiles, "./");
-                Helpers.MoveFileTo(sablFiles, "./");
-                Helpers.MoveFileTo(sabsFiles, "./");
-                Helpers.MoveFileTo(bikFiles, "./");
-
+            foreach (var entry in folderMap)
+            {
                 try
                 {
-                    Helpers.MoveDirectoryTo(ENGLISH_ZONE_FOLDER, ENGLISH_FOLDER);
-                    Helpers.MoveDirectoryTo(ENGLISH_SAFE_ZONE_FOLDER, ENGLISH_SAFE_FOLDER);
-                    Helpers.MoveDirectoryTo(FRENCH_ZONE_FOLDER, FRENCH_FOLDER);
-                    Helpers.MoveDirectoryTo(GERMAN_ZONE_FOLDER, GERMAN_FOLDER);
-                    Helpers.MoveDirectoryTo(RUSSIAN_ZONE_FOLDER, RUSSIAN_FOLDER);
-                    Helpers.MoveDirectoryTo(POLISH_ZONE_FOLDER, POLISH_FOLDER);
-                    Helpers.MoveDirectoryTo(JAPAN_ZONE_FOLDER, JAPAN_FOLDER);
-                    Helpers.MoveDirectoryTo(KOREAN_ZONE_FOLDER, KOREAN_FOLDER);
-                    Helpers.MoveDirectoryTo(PORTUGUESE_ZONE_FOLDER, PORTUGUESE_FOLDER);
-                    Helpers.MoveDirectoryTo(SPANISH_ZONE_FOLDER, SPANISH_FOLDER);
-                    Helpers.MoveDirectoryTo(ITALIAN_ZONE_FOLDER, ITALIAN_FOLDER);
-                    Helpers.MoveDirectoryTo(SCHINA_ZONE_FOLDER, SCHINA_FOLDER);
-                    Helpers.MoveDirectoryTo(TCHINA_ZONE_FOLDER, TCHINA_FOLDER);
+                    string source = isReverting ? entry.Value : entry.Key;
+                    string dest = isReverting ? entry.Key : entry.Value;
+                    Helpers.MoveDirectoryTo(source, dest);
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
+                catch (Exception ex) { Console.WriteLine(ex.Message); }
+            }
+        }
 
-                try
-                {
-                    File.Delete("zone");
-                    File.Delete("raw/video");
-                    File.Delete("raw");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
+        private async Task RevertCleaning()
+        {
+            Helpers.WriteColor("Reverting Game Files...", ConsoleColor.Cyan);
 
-                Console.WriteLine("Done Reverting Files\n");
-                goto Main;
+            string[] sourceFolders = { CLEAN_ZONE_FOLDER, CLEAN_RAW_VIDEO_FOLDER };
+
+            foreach (var folder in sourceFolders)
+            {
+                if (Directory.Exists(folder))
+                {
+                    var files = Directory.GetFiles(folder, "*.*");
+                    if (files.Length > 0)
+                    {
+                        Helpers.MoveFileTo(files, "./");
+                    }
+                }
             }
 
-            goto Main;
+            MoveLanguageFolders(isReverting: true);
+
+            Helpers.TryCleanupDirectory(CLEAN_RAW_VIDEO_FOLDER);
+            Helpers.TryCleanupDirectory(RAW_VIDEO_FOLDER);
+            Helpers.TryCleanupDirectory(RAW_FOLDER);
+            Helpers.TryCleanupDirectory(CLEAN_ZONE_FOLDER);
+            Helpers.TryCleanupDirectory(ZONE_FOLDER);
+
+            Helpers.WriteColor("Done Reverting Files\n", ConsoleColor.Green);
         }
     }
 }

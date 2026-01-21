@@ -2,6 +2,7 @@
 {
     public class Base
     {
+        public virtual bool RUNNING { get; set; } = false;
         public virtual string WELCOME_MESSAGE { get; } = "COD Files Cleaner";
 
         // Games
