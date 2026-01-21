@@ -6,6 +6,7 @@ class Program
 {
     private static readonly Base[] SupportedGames =
     [
+        new IW6(),
         new S1(),
         new IW7(),
         new H1()
