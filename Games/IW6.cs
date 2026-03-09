@@ -37,7 +37,7 @@
 
         private async Task CleanGameFiles()
         {
-            if (!File.Exists(COMMON_MP_FASTFILE) || !File.Exists(COMMON_FASTFILE))
+            if (!File.Exists(COMMON_MP_FASTFILE) && !File.Exists(COMMON_FASTFILE))
             {
                 Helpers.WriteColor("Your game is already clean!\nIf not, make sure you have put the file in the correct game folder.\n", ConsoleColor.Yellow);
                 return;
