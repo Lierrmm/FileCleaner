@@ -9,7 +9,8 @@ class Program
         new IW6(),
         new S1(),
         new IW7(),
-        new H1()
+        new H1(),
+        new S2()
     ];
 
     private static Base? DetectGame()

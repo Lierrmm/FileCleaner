@@ -14,6 +14,8 @@
         public virtual string PAK_EXTENSION { get; } = "*.pak";
         public virtual string SABL_EXTENSION { get; } = "*.sabl";
         public virtual string SABS_EXTENSION { get; } = "*.sabs";
+        public virtual string FD_EXTENSION { get; } = "*.fd";
+        public virtual string TOC_EXTENSION { get; } = "*.toc";
         public virtual string CLEAN_FASTFILE_EXTENSION { get; } = "zone/*.ff";
         public virtual string CLEAN_BIK_EXTENSION { get; } = "raw/video/*.bik";
         public virtual string CLEAN_PAK_EXTENSION { get; } = "zone/*.pak";
