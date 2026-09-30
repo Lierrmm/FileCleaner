@@ -27,7 +27,7 @@ jobs:
         run: Compress-Archive -Path ./publish/* -DestinationPath FileCleaner_Win64.zip
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: FileCleaner_Win64.zip
           name: Release ${{ github.ref_name }}
