@@ -3,7 +3,10 @@
     public class S2 : Base
     {
         public override string WELCOME_MESSAGE => "COD: WWII Cleaner";
-        public override string[] GAME_EXECUTABLES { get; } = { "s2_mp64_ship.exe", "s2_sp64_ship.exe", "s2x_mp64_ship.exe" };
+        public override string[] GAME_EXECUTABLES { get; } = { 
+            "s2_mp64_ship.exe", "s2_sp64_ship.exe", 
+            // s2x MS store client exes
+            "s2x_mp64_ship.exe", "s2x_sp64_ship.exe" };
 
         public override string COMMON_MP_FASTFILE { get; } = "common_core_mp.ff";
         public override string COMMON_FASTFILE { get; } = "common.ff";
